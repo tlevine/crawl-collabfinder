@@ -1,4 +1,7 @@
 #!/usr/bin/env python2
+import re
+from string import ascii_letters
+
 from random import normalvariate
 
 from numpy import array
@@ -6,6 +9,19 @@ from numpy import array
 from nltk.tokenize import wordpunct_tokenize #, word_tokenize, sent_tokenize
 from nltk.probability import LidstoneProbDist #LaplaceProbDist
 from nltk import NgramModel
+
+def detokenize(tokens):
+    text = ''
+    for token in tokens:
+        if token[0] in (ascii_letters + '(['):
+            # Add a space
+            text += ' '
+        elif token[0] in '([':
+            # Remove a space
+            text = text[:-1]
+
+        text += token
+    return re.sub(r'\.[^.]*$', '.', text[1:])
 
 MINIMUM_DESCRIPTION_LENGTH = 120
 def description_length_func(subdescriptions):
@@ -35,7 +51,8 @@ if __name__ == '__main__':
     import json
 
     descriptions = filter(None, [project['description'] for project in json.load(open(os.path.join('output', 'projects.json')))])
-    print descriptions[0]
+    generators={}
     for key in ['what', 'why', 'need']:
         subdescriptions = [d[key] for d in descriptions]
         lm, length = train_subdescription(subdescriptions)
+        generators[key] = lambda about: detokenize(lm.generate(length(), wordpunct_tokenize(about)))
