@@ -13,7 +13,7 @@ rnorm() {
   ))
 }
 
-dir="downloads/$(date --rfc-3339 date)"
+dir="projects/$(date --rfc-3339 date)"
 nTries=10
 
 if test -d "${dir}"; then
