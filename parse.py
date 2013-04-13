@@ -1,9 +1,9 @@
 #!/usr/bin/env python2
-from lxml.html import parse
+from lxml.html import fromstring
 
 def _backgrounds(html):
     'This project needs...'
-    return set(map(unicode, html.xpath('id("seeking")/descendant::b/text()')))
+    return map(unicode, html.xpath('id("seeking")/descendant::b/text()'))
 
 def _description(html):
     '''
@@ -27,7 +27,7 @@ def _github(html):
     'Project Github'
     results = html.xpath('//h2[@class="toppend-1 border_t_g"]/a/text()')
     if len(results) == 1:
-        return unicode(url)
+        return unicode(results[0])
 
 def answers(html):
     return {
@@ -38,7 +38,23 @@ def answers(html):
         'github': _github(html),
     }
 
+def main():
+    # Download directory
+    if len(sys.argv) != 2:
+        print('Usage: %s [download directory (date)]' % sys.argv[0])
+        exit(1)
+    download_directory = sys.argv[1]
+
+    # Loop through file names
+    for filename in os.listdir(download_directory):
+        raw = open(os.path.join(download_directory, filename)).read()
+        if raw == '':
+            continue
+        yield answers(fromstring(raw))
 
 if __name__ == '__main__':
-    print answers(parse('downloads/2013-04-13 15:10:54-04:00/23.html'))
-    #main()
+    import os
+    import sys
+    import json
+
+    json.dump(list(main()), open(os.path.join('output', 'projects.json'), 'w'))
