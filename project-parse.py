@@ -12,8 +12,9 @@ def _description(html):
     What do you need help with?
     '''
     questions =['what', 'why', 'need']
-    answers = filter(None, map(unicode, html.xpath('//div[@class="column span-18 append-1 border_t_g first last"]/h2[@class="plain"]/text()')))
-    return zip(questions, answers)
+    answers = map(unicode, html.xpath('//div[@class="column span-18 append-1 border_t_g first last"]/h2[@class="plain"]/text()'))
+    if len(answers) == 3:
+        return zip(questions, answers)
 
 def _goals(html):
     'Project Goals'
