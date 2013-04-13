@@ -14,7 +14,7 @@ def _description(html):
     questions =['what', 'why', 'need']
     answers = map(unicode, html.xpath('//div[@class="column span-18 append-1 border_t_g first last"]/h2[@class="plain"]/text()'))
     if len(answers) == 3:
-        return zip(questions, answers)
+        return dict(zip(questions, answers))
 
 def _goals(html):
     'Project Goals'
