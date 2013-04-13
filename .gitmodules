@@ -1,0 +1,3 @@
+[submodule "downloads"]
+	path = downloads
+	url = git@github.com:tlevine/crawl-collabfinder-downloads.git
