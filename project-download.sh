@@ -4,28 +4,24 @@ set -e
 # This converges to normality by the central limit theorem
 rnorm() {
   echo $((
-    $(($RANDOM % 8)) +
-    $(($RANDOM % 8)) +
-    $(($RANDOM % 8)) +
-    $(($RANDOM % 8)) +
-    $(($RANDOM % 8)) +
-    $(($RANDOM % 8))
+    $(($RANDOM % 6)) +
+    $(($RANDOM % 6)) +
+    $(($RANDOM % 6)) +
+    $(($RANDOM % 6)) +
+    $(($RANDOM % 6)) +
+    $(($RANDOM % 6))
   ))
 }
 
 dir="projects/$(date --rfc-3339 date)"
-nTries=10
-
-if test -d "${dir}"; then
-  startingPage=$(($nTries + $(ls "${dir}"|sort -n|tail -n1|cut -d. -f1)))
-else
-  mkdir -p "${dir}"
-  startingPage=1
-fi
+mkdir -p "${dir}"
+nTries=20
 
 failuresInARow=0
-for projectId in $(seq "${startingPage}" 200); do
+for projectId in $(seq 1 1000); do
   file="${dir}/${projectId}.html"
+
+  test -f "${file}" && continue
 
   wget -O "${file}" "http://collabfinder.com/project/${projectId}" || failuresInARow=$(($failuresInARow + 1))
   sleep $(rnorm)s
